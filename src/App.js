@@ -2,30 +2,33 @@ import React from "react";
 import "./App.css";
 import { Weather } from "./components/Weather";
 import { Search } from "./components/Search";
+import { Checkbox } from "./components/Checkbox";
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      favLocation: "Chicago",
+      favLocation: "London",
       data: {},
       loading: true,
       inputVal: "",
       darkMode: false,
+      isFahrenheit: false,
     };
   }
 
   // initial data fetching, this method calls fetchData() with favLocation argument
   componentDidMount() {
-    // this.fetchData(this.state.favLocation);
+    this.fetchData(this.state.favLocation);
 
     // get last search from localStorage and fetch it onload
-    this.fetchData(localStorage.getItem("lastSearch"));
+    // this.fetchData(localStorage.getItem("lastSearch"));
   }
 
   fetchData = async (city) => {
+    const unitMeasure = this.state.isFahrenheit ? "imperial" : "metric";
     const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d030ac84773f6c1da5dcb6a7fe964373&units=imperial`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d030ac84773f6c1da5dcb6a7fe964373&units=${unitMeasure}`
     );
     const data = await res.json();
     // update state -> data is stored, loading is done
@@ -41,8 +44,21 @@ class App extends React.Component {
     e.preventDefault();
     this.fetchData(this.state.inputVal);
     // send to localStorage
-    localStorage.setItem("lastSearch", this.state.inputVal);
-    this.setState({ inputVal: "" });
+    // localStorage.setItem("lastSearch", this.state.inputVal);
+
+    // if there is no any storage
+    this.setState({ favLocation: this.state.inputVal, inputVal: "" });
+  };
+
+  // toggle state => toggle unitMeasure in fetchData, fetch again with the same city from local storage
+  handleCheck = () => {
+    this.setState(
+      { isFahrenheit: !this.state.isFahrenheit },
+      () => this.fetchData(localStorage.getItem("lastSearch"))
+
+      // if there is no any storage
+      // this.fetchData(this.state.favLocation)
+    );
   };
 
   // toggle state darkMode
@@ -56,12 +72,14 @@ class App extends React.Component {
   };
 
   render() {
-    const { data, loading, inputVal, darkMode } = this.state;
-    // let clsName = darkMode ? "darkMode" : null;
+    const { data, loading, inputVal, darkMode, isFahrenheit } = this.state;
+    console.log(darkMode);
+    let clsName = darkMode ? "darkMode" : null;
     return (
       // switchMode btn assigns darkMode class to div by toggling state via btn
       // <div className={`App ${clsName}`}>
-      <div className={darkMode ? "App darkMode" : "App"}>
+
+      <div className={`App ${clsName}`}>
         <div className="container">
           {/* Cycle: constructor -> render -> fetchData
           on refresh state 'data' is empty -> render empty component -> fetching
@@ -72,16 +90,23 @@ class App extends React.Component {
             <p>Loading...</p>
           ) : (
             <>
-              <button onClick={this.switchMode}>
-                {darkMode ? "Light Mode" : "Dark Mode"}
-              </button>
+              <div className="navbar">
+                <Checkbox
+                  handleCheck={this.handleCheck}
+                  isFahrenheit={isFahrenheit}
+                />
+                <button onClick={this.switchMode}>
+                  {darkMode ? "Light Mode" : "Dark Mode"}
+                </button>
+              </div>
+
+              <Weather {...data} isFahrenheit={isFahrenheit} />
 
               <Search
                 inputVal={inputVal}
                 handleSubmit={this.handleSubmit}
                 handleInput={this.handleInput}
               />
-              <Weather {...data} />
             </>
           )}
         </div>

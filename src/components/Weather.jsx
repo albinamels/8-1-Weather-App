@@ -1,15 +1,21 @@
-export const Weather = ({ main, wind, name }) => {
+export const Weather = ({ main, wind, name, isFahrenheit }) => {
+  const tempUnit = isFahrenheit ? "F" : "C";
+  const speedUnit = isFahrenheit ? "miles" : "km";
   return (
     <>
       <div className="top">
         <p className="location">{name}</p>
-        <h1 className="temp">{main.temp}° F</h1>
+        <h1 className="temp">
+          {main.temp}° {tempUnit}
+        </h1>
         <div className="app-name">Weather App</div>
       </div>
 
       <div className="bottom">
         <div className="feels">
-          <p className="bold">{main.feels_like}°</p>
+          <p className="bold">
+            {main.feels_like}° {tempUnit}
+          </p>
           <p>Feels like</p>
         </div>
 
@@ -19,7 +25,9 @@ export const Weather = ({ main, wind, name }) => {
         </div>
 
         <div className="wind">
-          <p className="bold">{wind.speed}miles/hr</p>
+          <p className="bold">
+            {wind.speed} {speedUnit}/hr
+          </p>
           <p>Wind speed</p>
         </div>
       </div>
