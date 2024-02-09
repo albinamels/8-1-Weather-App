@@ -3,7 +3,7 @@ export const Search = ({ inputVal, handleSubmit, handleInput }) => {
     <form onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Enter city name..."
+        placeholder="Enter your city..."
         value={inputVal}
         onChange={handleInput}
       />

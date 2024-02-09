@@ -6,7 +6,7 @@ export const Weather = ({ main, wind, name, isFahrenheit }) => {
       <div className="top">
         <p className="location">{name}</p>
         <h1 className="temp">
-          {main.temp}° {tempUnit}
+          {Math.round(main.temp)}° {tempUnit}
         </h1>
         <div className="app-name">Weather App</div>
       </div>
@@ -14,7 +14,7 @@ export const Weather = ({ main, wind, name, isFahrenheit }) => {
       <div className="bottom">
         <div className="feels">
           <p className="bold">
-            {main.feels_like}° {tempUnit}
+            {Math.round(main.feels_like)}° {tempUnit}
           </p>
           <p>Feels like</p>
         </div>
